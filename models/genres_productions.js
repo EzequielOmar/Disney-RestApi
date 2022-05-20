@@ -16,8 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "ProductionId",
         targetKey: "id",
       });
-      models.Genres_Productions.belongsTo(models.Characters, {
-        foreignKey: "CharacterId",
+      models.Genres_Productions.belongsTo(models.Genres, {
+        foreignKey: "GenreId",
         targetKey: "id",
       });
     }

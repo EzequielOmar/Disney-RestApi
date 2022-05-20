@@ -1,12 +1,36 @@
 const Production = require("../../models").Productions;
 const Character = require("../../models").Characters;
+const Genre = require("../../models").Genres;
 const Characters_Productions = require("../../models").Characters_Productions;
+const Genres_Productions = require("../../models").Genres_Productions;
+const { sequelize } = require("../../models");
 const fs = require("fs");
 const { Uploads_URLs } = require("../const/urls");
 
-const get_productions = async (req, res) =>
+const get_productions = async (req, res) => {
+  let where = {},
+    include = [],
+    ord = "ASC";
+  if (req.query.title)
+    where["title"] = sequelize.where(
+      sequelize.fn("LOWER", sequelize.col("title")),
+      "LIKE",
+      "%" + req.query.title?.toLowerCase() + "%"
+    );
+  if (req.query.genre)
+    include.push({
+      model: Genre,
+      where: {
+        id: req.query.genre,
+      },
+      attributes: ["id", "image", "name"],
+    });
+  if (req.query.order === "DESC") ord = "DESC";
   Production.findAll({
     attributes: ["id", "image", "title", "creation"],
+    where,
+    include,
+    order: [["creation", ord]],
   })
     .then((data) =>
       res.status(200).send({
@@ -15,13 +39,18 @@ const get_productions = async (req, res) =>
       })
     )
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
+};
 
 const get_production_by_ID = async (req, res) =>
   Production.findByPk(req.params.id, {
     include: [
       {
         model: Character,
-        attributes: ["id", "name"],
+        attributes: ["id", "image", "name"],
+      },
+      {
+        model: Genre,
+        attributes: ["id", "image", "name"],
       },
     ],
   })
@@ -39,10 +68,16 @@ const get_production_by_ID = async (req, res) =>
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 
 const new_production = async (req, res) => {
-  let characters, err, image;
+  let characters, genres, err, image;
   if (req.file && req.file.fieldname === "image") image = req.file.filename;
   if (req.body.characters)
     [characters, err] = await checkCharacters(req.body.characters);
+  if (err)
+    return res.status(500).send({
+      error: err,
+      code: 500,
+    });
+  if (req.body.genres) [genres, err] = await checkGenres(req.body.genres);
   if (err)
     return res.status(500).send({
       error: err,
@@ -56,6 +91,7 @@ const new_production = async (req, res) => {
   })
     .then((prod) => {
       prod.addCharacter(characters);
+      prod.addGenre(genres);
       return res.status(201).send({
         message: "Production created.",
         data: prod.dataValues,
@@ -67,6 +103,7 @@ const new_production = async (req, res) => {
 
 const update_production = async (req, res) => {
   let characters,
+    genres,
     err,
     newValues = {
       title: req.body.name,
@@ -90,7 +127,14 @@ const update_production = async (req, res) => {
       error: err,
       code: 500,
     });
+  if (req.body.genres) [genres, err] = await checkGenres(req.body.genres);
+  if (err)
+    return res.status(500).send({
+      error: err,
+      code: 500,
+    });
   exists.addCharacter(characters);
+  exists.addGenre(genres);
   return Production.update(newValues, {
     where: { id: req.params.id },
   })
@@ -114,6 +158,9 @@ const delete_production = async (req, res) => {
   if (exists.image)
     fs.unlinkSync(Uploads_URLs.Productions + exists.dataValues.image);
   await Characters_Productions.destroy({
+    where: { ProductionId: exists.id },
+  });
+  await Genres_Productions.destroy({
     where: { ProductionId: exists.id },
   });
   return Production.destroy({
@@ -142,6 +189,23 @@ const checkCharacters = async (characters) => {
           ? res.push(arr[i])
           : (err =
               "Character with Id: " +
+              arr[i] +
+              " does not exists. You should create it first.")
+      );
+  return [res, err];
+};
+
+const checkGenres = async (characters) => {
+  let res = [];
+  let err = "";
+  let arr = JSON.parse(characters);
+  if (arr.length)
+    for (let i = 0; i < arr.length; i++)
+      await Genre.findByPk(arr[i]).then((g) =>
+        g
+          ? res.push(arr[i])
+          : (err =
+              "Genre with Id: " +
               arr[i] +
               " does not exists. You should create it first.")
       );

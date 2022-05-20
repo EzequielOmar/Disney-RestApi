@@ -1,12 +1,35 @@
 const Character = require("../../models").Characters;
 const Production = require("../../models").Productions;
 const Characters_Productions = require("../../models").Characters_Productions;
+const { sequelize } = require("../../models");
+const { Op } = require("sequelize");
 const fs = require("fs");
 const { Uploads_URLs } = require("../const/urls");
 
-const get_characters = async (req, res) =>
-  await Character.findAll({
+const get_characters = async (req, res) => {
+  let where = {},
+    include = [];
+  if (req.query.name)
+    where["name"] = sequelize.where(
+      sequelize.fn("LOWER", sequelize.col("name")),
+      "LIKE",
+      "%" + req.query.name?.toLowerCase() + "%"
+    );
+  if (req.query.age) where["age"] = req.query.age;
+  if (req.query.movies)
+    include.push({
+      model: Production,
+      where: {
+        id: {
+          [Op.in]: Array.from(req.query.movies),
+        },
+      },
+      attributes: ["id", "image", "title"],
+    });
+  return await Character.findAll({
     attributes: ["id", "image", "name"],
+    where,
+    include,
   })
     .then((data) =>
       res.status(200).send({
@@ -15,13 +38,14 @@ const get_characters = async (req, res) =>
       })
     )
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
+};
 
 const get_character_by_ID = async (req, res) =>
   Character.findByPk(req.params.id, {
     include: [
       {
         model: Production,
-        attributes: ["id", "title"],
+        attributes: ["id", "image", "title"],
       },
     ],
   })
@@ -41,11 +65,11 @@ const get_character_by_ID = async (req, res) =>
 const new_character = async (req, res) => {
   let movies, err, image;
   if (req.body.movies) [movies, err] = await checkProductions(req.body.movies);
-  if (err)
-    return res.status(500).send({
-      error: err,
-      code: 500,
-    });
+  if (err) return responseError(res, err);
+  //res.status(500).send({
+  //  error: err,
+  //  code: 500,
+  //});
   if (req.file && req.file.fieldname === "image") image = req.file.filename;
   return Character.create({
     image: image,
@@ -146,6 +170,12 @@ const checkProductions = async (movies) => {
       );
   return [res, err];
 };
+
+const responseError = (res, err) =>
+  res.status(500).send({
+    error: err,
+    code: 500,
+  });
 
 module.exports = {
   get_characters,

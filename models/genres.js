@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Genres",
       omitNull: false,
+      timestamps: false,
     }
   );
   return Genres;
