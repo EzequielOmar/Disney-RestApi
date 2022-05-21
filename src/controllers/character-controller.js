@@ -5,6 +5,7 @@ const { sequelize } = require("../../models");
 const { Op } = require("sequelize");
 const fs = require("fs");
 const { Uploads_URLs } = require("../const/urls");
+const { validationResult } = require("express-validator");
 
 const get_characters = async (req, res) => {
   let where = {},
@@ -56,13 +57,16 @@ const get_character_by_ID = async (req, res) =>
             code: 200,
           })
         : res.status(500).send({
-            error: "ID does not belong to existing character.",
+            error: "ID does not belong to existing character",
             code: 500,
           });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 
 const new_character = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(500).send({ error: errors.array(), code: 500 });
   let movies, err, image;
   if (req.body.movies) [movies, err] = await checkProductions(req.body.movies);
   if (err) return responseError(res, err);
@@ -81,7 +85,7 @@ const new_character = async (req, res) => {
     .then((char) => {
       char.addProduction(movies);
       return res.status(201).send({
-        message: "Character created.",
+        message: "Character created",
         data: char.dataValues,
         code: 201,
       });
@@ -90,6 +94,9 @@ const new_character = async (req, res) => {
 };
 
 const update_character = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(500).send({ error: errors.array(), code: 500 });
   let movies, err;
   let newValues = {
     name: req.body.name,
@@ -101,7 +108,7 @@ const update_character = async (req, res) => {
   if (!exists)
     return res
       .status(500)
-      .send({ error: "ID does not belong to existing character.", code: 500 });
+      .send({ error: "ID does not belong to existing character", code: 500 });
   else if (req.file && req.file.fieldname === "image") {
     newValues.image = req.file.filename;
     if (exists.image)
@@ -118,7 +125,7 @@ const update_character = async (req, res) => {
     where: { id: req.params.id },
   })
     .then((c) => {
-      let message = c[0] ? "Character modified." : "Character not modified.";
+      let message = c[0] ? "Character modified" : "Character not modified";
       return res.status(200).send({
         message: message,
         code: 200,
@@ -131,7 +138,7 @@ const delete_character = async (req, res) => {
   let exists = await Character.findByPk(req.params.id);
   if (!exists)
     return res.status(500).send({
-      error: "ID does not belong to existing character.",
+      error: "ID does not belong to existing character",
       code: 500,
     });
   if (exists.image)
@@ -146,7 +153,7 @@ const delete_character = async (req, res) => {
   })
     .then(() =>
       res.status(200).send({
-        message: "Character deleted.",
+        message: "Character deleted",
         data: req.params.id,
         code: 200,
       })
@@ -166,7 +173,7 @@ const checkProductions = async (movies) => {
           : (err =
               "Movie with Id: " +
               arr[i] +
-              " does not exists. You should create the movie first.")
+              " does not exists. You should create the movie first")
       );
   return [res, err];
 };

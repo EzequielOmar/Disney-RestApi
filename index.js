@@ -5,6 +5,7 @@ const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
 //routes
+const authRoutes = require("./src/routes/auth-routes");
 const characterRoutes = require("./src/routes/character-routes");
 const productionRoutes = require("./src/routes/production-routes");
 
@@ -40,6 +41,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Routes
+//auth endpoints
+app.use("/auth", authRoutes);
 //character endpoints
 app.use("/characters", characterRoutes);
 //production endpoints

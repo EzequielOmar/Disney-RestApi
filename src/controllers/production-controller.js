@@ -6,6 +6,7 @@ const Genres_Productions = require("../../models").Genres_Productions;
 const { sequelize } = require("../../models");
 const fs = require("fs");
 const { Uploads_URLs } = require("../const/urls");
+const { validationResult } = require("express-validator");
 
 const get_productions = async (req, res) => {
   let where = {},
@@ -61,13 +62,16 @@ const get_production_by_ID = async (req, res) =>
             code: 200,
           })
         : res.status(500).send({
-            error: "ID does not belong to existing production.",
+            error: "ID does not belong to existing production",
             code: 500,
           })
     )
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 
 const new_production = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(500).send({ error: errors.array(), code: 500 });
   let characters, genres, err, image;
   if (req.file && req.file.fieldname === "image") image = req.file.filename;
   if (req.body.characters)
@@ -93,7 +97,7 @@ const new_production = async (req, res) => {
       prod.addCharacter(characters);
       prod.addGenre(genres);
       return res.status(201).send({
-        message: "Production created.",
+        message: "Production created",
         data: prod.dataValues,
         code: 201,
       });
@@ -102,6 +106,9 @@ const new_production = async (req, res) => {
 };
 
 const update_production = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(500).send({ error: errors.array(), code: 500 });
   let characters,
     genres,
     err,
@@ -114,7 +121,7 @@ const update_production = async (req, res) => {
   if (!exists)
     return res
       .status(500)
-      .send({ error: "ID does not belong to existing production.", code: 500 });
+      .send({ error: "ID does not belong to existing production", code: 500 });
   else if (req.file && req.file.fieldname === "image") {
     newValues.image = req.file.filename;
     if (exists.image)
@@ -139,7 +146,7 @@ const update_production = async (req, res) => {
     where: { id: req.params.id },
   })
     .then((c) => {
-      let message = c[0] ? "Production modified." : "Production not modified.";
+      let message = c[0] ? "Production modified" : "Production not modified";
       return res.status(200).send({
         message: message,
         code: 200,
@@ -152,7 +159,7 @@ const delete_production = async (req, res) => {
   let exists = await Production.findByPk(req.params.id);
   if (!exists)
     return res.status(500).send({
-      error: "ID does not belong to existing production.",
+      error: "ID does not belong to existing production",
       code: 500,
     });
   if (exists.image)
@@ -170,7 +177,7 @@ const delete_production = async (req, res) => {
   })
     .then(() =>
       res.status(200).send({
-        message: "Production deleted.",
+        message: "Production deleted",
         data: req.params.id,
         code: 200,
       })
@@ -190,7 +197,7 @@ const checkCharacters = async (characters) => {
           : (err =
               "Character with Id: " +
               arr[i] +
-              " does not exists. You should create it first.")
+              " does not exists. You should create it first")
       );
   return [res, err];
 };
@@ -207,7 +214,7 @@ const checkGenres = async (characters) => {
           : (err =
               "Genre with Id: " +
               arr[i] +
-              " does not exists. You should create it first.")
+              " does not exists. You should create it first")
       );
   return [res, err];
 };
