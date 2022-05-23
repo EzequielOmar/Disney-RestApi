@@ -1,14 +1,14 @@
-const Production = require("../../models").Productions;
+const Movie = require("../../models").Movies;
 const Character = require("../../models").Characters;
 const Genre = require("../../models").Genres;
-const Characters_Productions = require("../../models").Characters_Productions;
-const Genres_Productions = require("../../models").Genres_Productions;
+const Characters_Movies = require("../../models").Characters_Movies;
+const Genres_Movies = require("../../models").Genres_Movies;
 const { sequelize } = require("../../models");
 const fs = require("fs");
 const { Uploads_URLs } = require("../const/urls");
 const { validationResult } = require("express-validator");
 
-const get_productions = async (req, res) => {
+const get_movies = async (req, res) => {
   let where = {},
     include = [],
     ord = "ASC";
@@ -24,10 +24,9 @@ const get_productions = async (req, res) => {
       where: {
         id: req.query.genre,
       },
-      attributes: ["id", "image", "name"],
     });
   if (req.query.order === "DESC") ord = "DESC";
-  Production.findAll({
+  Movie.findAll({
     attributes: ["id", "image", "title", "creation"],
     where,
     include,
@@ -42,8 +41,8 @@ const get_productions = async (req, res) => {
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 };
 
-const get_production_by_ID = async (req, res) =>
-  Production.findByPk(req.params.id, {
+const get_movie_by_ID = async (req, res) =>
+  Movie.findByPk(req.params.id, {
     include: [
       {
         model: Character,
@@ -61,33 +60,33 @@ const get_production_by_ID = async (req, res) =>
             data: data.dataValues,
             code: 200,
           })
-        : res.status(500).send({
-            error: "ID does not belong to existing production",
-            code: 500,
+        : res.status(404).send({
+            error: "ID does not belong to existing movie",
+            code: 404,
           })
     )
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 
-const new_production = async (req, res) => {
+const new_movie = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
-    return res.status(500).send({ error: errors.array(), code: 500 });
+    return res.status(400).send({ error: errors.array(), code: 400 });
   let characters, genres, err, image;
   if (req.file && req.file.fieldname === "image") image = req.file.filename;
   if (req.body.characters)
     [characters, err] = await checkCharacters(req.body.characters);
   if (err)
-    return res.status(500).send({
+    return res.status(400).send({
       error: err,
-      code: 500,
+      code: 400,
     });
   if (req.body.genres) [genres, err] = await checkGenres(req.body.genres);
   if (err)
-    return res.status(500).send({
+    return res.status(400).send({
       error: err,
-      code: 500,
+      code: 400,
     });
-  return Production.create({
+  return Movie.create({
     image: image,
     title: req.body.title,
     creation: req.body.creation,
@@ -97,7 +96,7 @@ const new_production = async (req, res) => {
       prod.addCharacter(characters);
       prod.addGenre(genres);
       return res.status(201).send({
-        message: "Production created",
+        message: "Movie created",
         data: prod.dataValues,
         code: 201,
       });
@@ -105,10 +104,10 @@ const new_production = async (req, res) => {
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 };
 
-const update_production = async (req, res) => {
+const update_movie = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
-    return res.status(500).send({ error: errors.array(), code: 500 });
+    return res.status(400).send({ error: errors.array(), code: 400 });
   let characters,
     genres,
     err,
@@ -117,67 +116,71 @@ const update_production = async (req, res) => {
       creation: req.body.creation,
       score: req.body.score,
     };
-  let exists = await Production.findByPk(req.params.id);
+  let exists = await Movie.findByPk(req.params.id);
   if (!exists)
     return res
-      .status(500)
-      .send({ error: "ID does not belong to existing production", code: 500 });
+      .status(404)
+      .send({ error: "ID does not belong to existing movie", code: 404 });
   else if (req.file && req.file.fieldname === "image") {
     newValues.image = req.file.filename;
     if (exists.image)
-      fs.unlinkSync(Uploads_URLs.Productions + exists.dataValues.image);
+      fs.unlinkSync(Uploads_URLs.Movies + exists.dataValues.image);
   }
   if (req.body.characters)
     [characters, err] = await checkCharacters(req.body.characters);
   if (err)
-    return res.status(500).send({
+    return res.status(400).send({
       error: err,
-      code: 500,
+      code: 400,
     });
   if (req.body.genres) [genres, err] = await checkGenres(req.body.genres);
   if (err)
-    return res.status(500).send({
+    return res.status(400).send({
       error: err,
-      code: 500,
+      code: 400,
     });
   exists.addCharacter(characters);
   exists.addGenre(genres);
-  return Production.update(newValues, {
+  return Movie.update(newValues, {
     where: { id: req.params.id },
   })
-    .then((c) => {
-      let message = c[0] ? "Production modified" : "Production not modified";
-      return res.status(200).send({
+    .then((m) => {
+      let message = m[0] ? "Movie modified" : "Movie not modified";
+      let code = m[0] ? 200 : 304;
+      return res.status(code).send({
         message: message,
-        code: 200,
+        code: code,
       });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 };
 
-const delete_production = async (req, res) => {
-  let exists = await Production.findByPk(req.params.id);
+const delete_movie = async (req, res) => {
+  let exists = await Movie.findByPk(req.params.id);
   if (!exists)
-    return res.status(500).send({
-      error: "ID does not belong to existing production",
-      code: 500,
+    return res.status(404).send({
+      error: "ID does not belong to existing movie",
+      code: 404,
     });
-  if (exists.image)
-    fs.unlinkSync(Uploads_URLs.Productions + exists.dataValues.image);
-  await Characters_Productions.destroy({
-    where: { ProductionId: exists.id },
+  if (
+    exists.image &&
+    fs.existsSync(Uploads_URLs.Movies + exists.dataValues.image)
+  )
+    fs.unlinkSync(Uploads_URLs.Movies + exists.dataValues.image);
+  await Characters_Movies.destroy({
+    where: { MovieId: exists.id },
   });
-  await Genres_Productions.destroy({
-    where: { ProductionId: exists.id },
+  await Genres_Movies.destroy({
+    where: { MovieId: exists.id },
   });
-  return Production.destroy({
+  return Movie.destroy({
     where: {
       id: exists.id,
     },
   })
     .then(() =>
       res.status(200).send({
-        message: "Production deleted",
+        message: "Movie deleted",
         data: req.params.id,
         code: 200,
       })
@@ -220,9 +223,9 @@ const checkGenres = async (characters) => {
 };
 
 module.exports = {
-  get_productions,
-  get_production_by_ID,
-  new_production,
-  update_production,
-  delete_production,
+  get_movies,
+  get_movie_by_ID,
+  new_movie,
+  update_movie,
+  delete_movie,
 };

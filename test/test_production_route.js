@@ -9,11 +9,11 @@ chai.use(chaiHttp);
 const url = process.env.HOST;
 const testImage = "./test/test-image.jpeg";
 
-//*mockup of production model
-const Production = require("../models").Productions;
+//*mockup of movie model
+const Movie = require("../models").Movies;
 
 xdescribe("GET on /movies and /movies/:id :", () => {
-  beforeEach(() => Production.destroy({ truncate: true }));
+  beforeEach(() => Movie.destroy({ truncate: true }));
 
   it("Should return an empty list.", (done) => {
     chai
@@ -26,13 +26,13 @@ xdescribe("GET on /movies and /movies/:id :", () => {
       });
   });
 
-  it("Should return an existing production.", (done) => {
+  it("Should return an existing movie.", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       creation: faker.date.past(),
     };
-    //* Create previous production with repeated name.
-    Production.create(prodTest).then((char) => {
+    //* Create previous movie with repeated name.
+    Movie.create(prodTest).then((char) => {
       chai
         .request(url)
         .get("/movies/" + char.dataValues.id)
@@ -44,7 +44,7 @@ xdescribe("GET on /movies and /movies/:id :", () => {
     });
   });
 
-  it("Should fail on return a non existing production.", (done) => {
+  it("Should fail on return a non existing movie.", (done) => {
     chai
       .request(url)
       .get(
@@ -52,19 +52,16 @@ xdescribe("GET on /movies and /movies/:id :", () => {
       )
       .end(function (err, res) {
         expect(res).to.have.status(500);
-        assert.equal(
-          res.body.error,
-          "ID does not belong to existing production."
-        );
+        assert.equal(res.body.error, "ID does not belong to existing movie.");
         done();
       });
   });
 });
 
 xdescribe("POST on /movies : ", () => {
-  beforeEach(() => Production.destroy({ truncate: true }));
+  beforeEach(() => Movie.destroy({ truncate: true }));
 
-  it("Should insert a production with all the correct values.", (done) => {
+  it("Should insert a movie with all the correct values.", (done) => {
     let date = faker.date.past();
     const prodTest = {
       title: faker.name.findName(),
@@ -82,7 +79,7 @@ xdescribe("POST on /movies : ", () => {
       .attach("image", fs.readFileSync(testImage), "test-image.jpeg")
       .end(function (err, res) {
         expect(res).to.have.status(201);
-        assert.equal(res.body.message, "Production created.");
+        assert.equal(res.body.message, "Movie created.");
         expect(res.body.data.image).to.be.not.null;
         assert.equal(res.body.data.title, prodTest.title);
         //* Database store and return date in yyy-mm-dd format
@@ -92,13 +89,13 @@ xdescribe("POST on /movies : ", () => {
       });
   });
 
-  it("Should fail by NOT UNIQUE production title.", (done) => {
+  it("Should fail by NOT UNIQUE movie title.", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       creation: faker.date.past().toUTCString(),
     };
-    //* Create previous production with repeated name.
-    Production.create(prodTest).finally(() => {
+    //* Create previous movie with repeated name.
+    Movie.create(prodTest).finally(() => {
       chai
         .request(url)
         .post("/movies")
@@ -128,15 +125,15 @@ xdescribe("POST on /movies : ", () => {
 });
 
 xdescribe("PATCH on /movies/:id: ", () => {
-  beforeEach(() => Production.destroy({ truncate: true }));
+  beforeEach(() => Movie.destroy({ truncate: true }));
 
-  it("Should modify production values with correct passed ones.", (done) => {
+  it("Should modify movie values with correct passed ones.", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       creation: faker.date.past(),
     };
-    //* instert the test production
-    Production.create(prodTest).then((char) => {
+    //* instert the test movie
+    Movie.create(prodTest).then((char) => {
       chai
         .request(url)
         .patch("/movies/" + char.dataValues.id)
@@ -145,32 +142,32 @@ xdescribe("PATCH on /movies/:id: ", () => {
         })
         .end(function (err, res) {
           expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Production modified.");
+          expect(res.body.message).to.be.equal("Movie modified.");
           done();
         });
     });
   });
 
-  it("Should not modify production if pass incorrect values.", (done) => {
+  it("Should not modify movie if pass incorrect values.", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       creation: faker.date.past(),
     };
-    //* instert the test production
-    Production.create(prodTest).then((char) => {
+    //* instert the test movie
+    Movie.create(prodTest).then((char) => {
       chai
         .request(url)
         .patch("/movies/" + char.dataValues.id)
         .send({ fake: "fakeValue", fake2: "fakeValue2" })
         .end(function (err, res) {
           expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Production not modified.");
+          expect(res.body.message).to.be.equal("Movie not modified.");
           done();
         });
     });
   });
 
-  it("Should fail if ID does not belong to existing production.", (done) => {
+  it("Should fail if ID does not belong to existing movie.", (done) => {
     chai
       .request(url)
       .patch(
@@ -180,7 +177,7 @@ xdescribe("PATCH on /movies/:id: ", () => {
       .end(function (err, res) {
         expect(res).to.have.status(500);
         expect(res.body.error).to.be.equal(
-          "ID does not belong to existing production."
+          "ID does not belong to existing movie."
         );
         done();
       });
@@ -188,27 +185,27 @@ xdescribe("PATCH on /movies/:id: ", () => {
 });
 
 xdescribe("DELETE on /movies/:id: ", () => {
-  beforeEach(() => Production.destroy({ truncate: true }));
+  beforeEach(() => Movie.destroy({ truncate: true }));
 
-  it("Should delete an existing production.", (done) => {
+  it("Should delete an existing movie.", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       creation: faker.date.past(),
     };
-    //* instert the test production
-    Production.create(prodTest).then((char) => {
+    //* instert the test movie
+    Movie.create(prodTest).then((char) => {
       chai
         .request(url)
         .delete("/movies/" + char.dataValues.id)
         .end(function (err, res) {
           expect(res).to.have.status(200);
-          assert.equal(res.body.message, "Production deleted.");
+          assert.equal(res.body.message, "Movie deleted.");
           done();
         });
     });
   });
 
-  it("Should fail if ID does not belong to existing production.", (done) => {
+  it("Should fail if ID does not belong to existing movie.", (done) => {
     chai
       .request(url)
       .delete(
@@ -218,7 +215,7 @@ xdescribe("DELETE on /movies/:id: ", () => {
       .end(function (err, res) {
         expect(res).to.have.status(500);
         expect(res.body.error).to.be.equal(
-          "ID does not belong to existing production."
+          "ID does not belong to existing movie."
         );
         done();
       });

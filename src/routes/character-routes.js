@@ -18,9 +18,9 @@ router.post(
   auth,
   upload.single("image"),
   body("name", "Field name is invalid").isLength({ min: 2, max: 125 }),
-  body("age", "Field age is invalid").isInt(),
-  body("weight", "Field weight is invalid").isFloat(),
-  body("story", "Field story is invalid").isLength({ min: 2, max: 225 }),
+  body("age", "Field age is invalid").isInt({ min: 0 }),
+  body("weight", "Field weight is invalid").isFloat({ min: 0 }),
+  body("story", "Field story is invalid").isLength({ max: 225 }),
   characterController.new_character
 );
 
@@ -31,10 +31,12 @@ router.patch(
   body("name", "Field name is invalid")
     .if(body("name").exists())
     .isLength({ min: 2, max: 125 }),
-  body("age", "Field age is invalid").if(body("age").exists()).isInt(),
+  body("age", "Field age is invalid")
+    .if(body("age").exists())
+    .isInt({ min: 0 }),
   body("weight", "Field weight is invalid")
     .if(body("weight").exists())
-    .isFloat(),
+    .isFloat({ min: 0 }),
   body("story", "Field story is invalid")
     .if(body("story").exists())
     .isLength({ max: 225 }),

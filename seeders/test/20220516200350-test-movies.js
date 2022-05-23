@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    queryInterface.bulkInsert("Productions", [
+    queryInterface.bulkInsert("Movies", [
       {
         id: 1,
         image: "das4d56s1d2as4d48s7das5das.jpeg",
@@ -20,5 +20,5 @@ module.exports = {
     ]),
 
   down: (queryInterface, Sequelize) =>
-    queryInterface.bulkDelete("Productions", null, {}),
+    queryInterface.bulkDelete("Movies", null, {}),
 };

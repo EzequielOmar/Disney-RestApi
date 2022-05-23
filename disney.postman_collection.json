@@ -1,0 +1,2343 @@
+{
+	"info": {
+		"_postman_id": "648f70d4-f977-4e80-8ad0-ce5f4eccb28e",
+		"name": "ALKEMY CHALLENGE BACKEND - NodeJs",
+		"description": "#### ALKEMY CHALLENGE BACKEND - NodeJs\n\n# **Disney Api**\n\n###### Node-Express-Sequelize-MySql-Jwt\n\nThe system consist of three entities: **Genre**, **Movie**, **Character**.\n\n**Many to Many** relation on:\n\n*   Genre <-> Movie\n*   Character <-> Movie\n    \n\nEnabled endpoints for **CRUD** methods for **Character** and **Movie** entities. And enabled endpoints (**signup** and **login**) to create and authenticate users.\n\nAll the methods that modify data are private and require **Authentication Bearer** header.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9036853"
+	},
+	"item": [
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "All Movies",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}movies?title=to&genre=1&order=DESC",
+							"host": [
+								"{{host}}movies"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "to",
+									"description": "String - Filter movies with title that includes this value."
+								},
+								{
+									"key": "genre",
+									"value": "1",
+									"description": "Number (Id) - Filters the movies associated with the genre identified with this value."
+								},
+								{
+									"key": "order",
+									"value": "DESC",
+									"description": "String - Order the results by creation date (by default it sort ascendig, so only need to specifies for descending)."
+								}
+							]
+						},
+						"description": "Get all movies data, fields: id, image, title, creation. You can filter by title, genre, or sort by creation date."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}movies?title=to&genre=1&order=DESC",
+									"host": [
+										"{{host}}movies"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "to",
+											"description": "String - Filter movies with title that includes this value."
+										},
+										{
+											"key": "genre",
+											"value": "1",
+											"description": "Number (Id) - Filters the movies associated with the genre identified with this value."
+										},
+										{
+											"key": "order",
+											"value": "DESC",
+											"description": "String - Order the results by creation date (by default it sort ascendig, so only need to specifies for descending)."
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "266"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"10a-qKcpby/5+I+l8/Z4jHqrubPmCUs\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:12:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n            \"title\": \"Tom & Jerry Adventures\",\n            \"creation\": \"2012-04-12T00:00:00.000Z\",\n            \"Genres\": [\n                {\n                    \"id\": 1,\n                    \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n                    \"name\": \"Adventure\",\n                    \"Genres_Movies\": {\n                        \"GenreId\": 1,\n                        \"MovieId\": 1\n                    }\n                }\n            ]\n        }\n    ],\n    \"code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Movie by Id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}movies/1",
+							"host": [
+								"{{host}}movies"
+							],
+							"path": [
+								"1"
+							]
+						},
+						"description": "Get all fields of a movie by id, included the associated Genres and Characters."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}movies/1",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "555"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"22b-2i3pSDYI22uMlU3t9VqfSbE5Cpk\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:16:08 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n        \"title\": \"Tom & Jerry Adventures\",\n        \"creation\": \"2012-04-12T00:00:00.000Z\",\n        \"score\": 4.15,\n        \"createdAt\": null,\n        \"updatedAt\": null,\n        \"Characters\": [\n            {\n                \"id\": 1,\n                \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n                \"name\": \"Tom\",\n                \"Characters_Movies\": {\n                    \"CharacterId\": 1,\n                    \"MovieId\": 1\n                }\n            },\n            {\n                \"id\": 2,\n                \"image\": \"yt56re74yret1y35rret1erte.jpeg\",\n                \"name\": \"Jerry\",\n                \"Characters_Movies\": {\n                    \"CharacterId\": 2,\n                    \"MovieId\": 1\n                }\n            }\n        ],\n        \"Genres\": [\n            {\n                \"id\": 1,\n                \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n                \"name\": \"Adventure\",\n                \"Genres_Movies\": {\n                    \"GenreId\": 1,\n                    \"MovieId\": 1\n                }\n            }\n        ]\n    },\n    \"code\": 200\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}movies/5",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"5"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "59"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3b-txF/UyKhBWHF/xOR+OnSxAtT4Zg\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:14:39 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"ID does not belong to existing movie\",\n    \"code\": 404\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+									"type": "file",
+									"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+								},
+								{
+									"key": "title",
+									"value": "Tom & Jerry 5 - The revenge",
+									"description": "String* [min:2, max:125, unique] - Title of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "creation",
+									"value": "2012-11-13",
+									"description": "String* [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "score",
+									"value": "2.45",
+									"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "characters",
+									"value": "[1,2]",
+									"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+									"type": "text"
+								},
+								{
+									"key": "genres",
+									"value": "[1,2]",
+									"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}movies",
+							"host": [
+								"{{host}}movies"
+							]
+						},
+						"description": "Create a movie, validating the data sended. You can pass an array of Characters/Genres ids, to create the association with an existing data row."
+					},
+					"response": [
+						{
+							"name": "201",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 5 - The revenge",
+											"description": "String* [min:2, max:125, unique] - Title of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String* [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text"
+										},
+										{
+											"key": "genres",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "localhost:8080/movies",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"movies"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "209"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"d1-nU0qRYCvDhfVfJyUruAzykZOCiA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 May 2022 23:58:22 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Movie created\",\n    \"data\": {\n        \"id\": 3,\n        \"title\": \"Tom & Jerry 5 - The revenge\",\n        \"creation\": \"2012-11-13\",\n        \"score\": \"2.45\",\n        \"updatedAt\": \"2022-05-22T23:58:21.187Z\",\n        \"createdAt\": \"2022-05-22T23:58:21.187Z\"\n    },\n    \"code\": 201\n}"
+						},
+						{
+							"name": "400 - Genre does not exists",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 4 - The revenge",
+											"description": "String* [min:2, max:125, unique] - Title of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String* [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text"
+										},
+										{
+											"key": "genres",
+											"value": "[1,2,3]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}movies",
+									"host": [
+										"{{host}}movies"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "83"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"53-RCPFSyspBCNFLuTyyvv+JK850/I\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:20:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Genre with Id: 3 does not exists. You should create it first\",\n    \"code\": 400\n}"
+						},
+						{
+							"name": "400 - Missing value",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 4 - The revenge",
+											"description": "String* [min:2, max:125, unique] - Title of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String* [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text"
+										},
+										{
+											"key": "genres",
+											"value": "[1,2,3]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}movies",
+									"host": [
+										"{{host}}movies"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "95"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5f-Willsw1JwSYBXnPG6yi5+Klu7B0\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:21:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": [\n        {\n            \"msg\": \"Field creation is invalid\",\n            \"param\": \"creation\",\n            \"location\": \"body\"\n        }\n    ],\n    \"code\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+									"type": "file",
+									"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+								},
+								{
+									"key": "title",
+									"value": "Tom & Jerry 5 - The revenge",
+									"description": "String [min:2, max:125] - Title of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "creation",
+									"value": "2012-11-13",
+									"description": "String [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "score",
+									"value": "2.45",
+									"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+									"type": "text"
+								},
+								{
+									"key": "characters",
+									"value": "[1,2]",
+									"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+									"type": "text"
+								},
+								{
+									"key": "genres",
+									"value": "[1,2]",
+									"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}movies/1",
+							"host": [
+								"{{host}}movies"
+							],
+							"path": [
+								"1"
+							]
+						},
+						"description": "Update the passing values by PATCH. You can pass either one value or several, they are validated and updated in the data row."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 5 - The revenge",
+											"description": "String [min:2, max:125] - Title of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text"
+										},
+										{
+											"key": "genres",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}movies/1",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "39"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"27-tkF7R8EA8cejONK9P98y6En9Jjc\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:22:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Movie modified\",\n    \"code\": 200\n}"
+						},
+						{
+							"name": "304",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg",
+											"disabled": true
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 5 - The revenge",
+											"description": "String [min:2, max:125] - Title of the new movie.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "genres",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}movies/2",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"2"
+									]
+								}
+							},
+							"status": "Not Modified",
+							"code": 304,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b-rNf6ddueMUPXdOp6rF99Puv9HAw\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:24:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Movie image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "title",
+											"value": "Tom & Jerry 5 - The revenge",
+											"description": "String [min:2, max:125] - Title of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "creation",
+											"value": "2012-11-13",
+											"description": "String [format: yyyy-mm-dd] - Date only string, representing the fate of release of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "score",
+											"value": "2.45",
+											"description": "Float [min:0, max:5, def:0]- Score value of the new movie.",
+											"type": "text"
+										},
+										{
+											"key": "characters",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of characters id's starring the movie (Should exists previously).",
+											"type": "text"
+										},
+										{
+											"key": "genres",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of genres id's to be associated with the movie (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}movies/10",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"10"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "59"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3b-txF/UyKhBWHF/xOR+OnSxAtT4Zg\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:25:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"ID does not belong to existing movie\",\n    \"code\": 404\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}movies/1",
+							"host": [
+								"{{host}}movies"
+							],
+							"path": [
+								"1"
+							]
+						},
+						"description": "Delete a movie by Id."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}movies/1",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "49"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"31-9T2nebHUwxArybKYCFZ1TR4ci2s\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:28:14 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Movie deleted\",\n    \"data\": \"1\",\n    \"code\": 200\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}movies/1",
+									"host": [
+										"{{host}}movies"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "59"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3b-txF/UyKhBWHF/xOR+OnSxAtT4Zg\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:26:22 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"ID does not belong to existing movie\",\n    \"code\": 404\n}"
+						}
+					]
+				}
+			],
+			"description": "#### Fields:\n\n*   Id\n*   Image\n*   Title\n*   Creation\n*   Score\n*   Characters\n*   Genres\n*   CreatedAt\n*   UpdateAt"
+		},
+		{
+			"name": "Characters",
+			"item": [
+				{
+					"name": "All Characters",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{host}}characters?name=to&age=2&movies=[1]",
+							"host": [
+								"{{host}}characters"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "to",
+									"description": "String - Filter characters with name that includes this value."
+								},
+								{
+									"key": "age",
+									"value": "2",
+									"description": "Number - Filter characters with age equals this value."
+								},
+								{
+									"key": "movies",
+									"value": "[1]",
+									"description": "Array<Number(Id)> - Array of movies id's, filter characters that have starred in at least one of the movies."
+								}
+							]
+						},
+						"description": "Get all characters data, fields: id, image, name. You can filter by name, age, or movie."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{host}}characters?name=to&age=2&movies=[1]",
+									"host": [
+										"{{host}}characters"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "to",
+											"description": "String - Filter characters with name that includes this value."
+										},
+										{
+											"key": "age",
+											"value": "2",
+											"description": "Number - Filter characters with age equals this value."
+										},
+										{
+											"key": "movies",
+											"value": "[1]",
+											"description": "Array<Number(Id)> - Array of movies id's, filter characters that have starred in at least one of the movies."
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "230"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e6-LCLStfy46ZsRj2QSYoiSJnP12ck\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:32:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n            \"name\": \"Tom\",\n            \"Movies\": [\n                {\n                    \"id\": 1,\n                    \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n                    \"title\": \"Tom & Jerry Adventures\",\n                    \"Characters_Movies\": {\n                        \"CharacterId\": 1,\n                        \"MovieId\": 1\n                    }\n                }\n            ]\n        }\n    ],\n    \"code\": 200\n}"
+						}
+					]
+				},
+				{
+					"name": "Character by Id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}characters/1",
+							"host": [
+								"{{host}}characters"
+							],
+							"path": [
+								"1"
+							]
+						},
+						"description": "Get all fields of a character by id, included the associated Movies."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/characters/1",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"characters",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "323"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"143-d3aXx4GUN2y7pLr9cLo6ZhIJ1Xc\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 May 2022 23:53:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": {\n        \"id\": 1,\n        \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n        \"name\": \"Tom\",\n        \"age\": 2,\n        \"weight\": 1.45,\n        \"story\": \"Tom is always chasing Jerry.\",\n        \"createdAt\": null,\n        \"updatedAt\": null,\n        \"Movies\": [\n            {\n                \"id\": 1,\n                \"image\": \"das4d56s1d2as4d48s7das5das.jpeg\",\n                \"title\": \"Tom & Jerry Adventures\",\n                \"Characters_Movies\": {\n                    \"CharacterId\": 1,\n                    \"MovieId\": 1\n                }\n            }\n        ]\n    },\n    \"code\": 200\n}"
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}characters/4",
+									"host": [
+										"{{host}}characters"
+									],
+									"path": [
+										"4"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-r6GxH0H9rlkzv/DiBDKt8/hbgnc\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:32:24 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"ID does not belong to existing character\",\n    \"code\": 404\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Character",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+									"type": "file",
+									"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+								},
+								{
+									"key": "name",
+									"value": "Boss",
+									"description": "String* [min:2, max:125, unique] - Name of the character.",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "5",
+									"description": "Number [min:0] - Age of the character in years.",
+									"type": "text"
+								},
+								{
+									"key": "weight",
+									"value": "45.5",
+									"description": "Float [min:0] - Weight of the character in Kg.",
+									"type": "text"
+								},
+								{
+									"key": "story",
+									"value": "Boss is always beating Tom.",
+									"description": "String [max:225] - A description, or background of the character.",
+									"type": "text"
+								},
+								{
+									"key": "movies",
+									"value": "[1,2]",
+									"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}characters",
+							"host": [
+								"{{host}}characters"
+							]
+						},
+						"description": "Create a character, validating the data sended. You can pass an array of Movies ids, to create the association with an existing data row."
+					},
+					"response": [
+						{
+							"name": "201",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Boss",
+											"description": "String* [min:2, max:125, unique] - Name of the character.",
+											"type": "text"
+										},
+										{
+											"key": "age",
+											"value": "5",
+											"description": "Number [min:0] - Age of the character in years.",
+											"type": "text"
+										},
+										{
+											"key": "weight",
+											"value": "45.5",
+											"description": "Float [min:0] - Weight of the character in Kg.",
+											"type": "text"
+										},
+										{
+											"key": "story",
+											"value": "Boss is always beating Tom.",
+											"description": "String [max:225] - A description, or background of the character.",
+											"type": "text"
+										},
+										{
+											"key": "movies",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}characters",
+									"host": [
+										"{{host}}characters"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "214"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"d6-cLVQBb+hdfeZQJLfIR+qAlZuT4c\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:33:13 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Character created\",\n    \"data\": {\n        \"id\": 4,\n        \"name\": \"Boss\",\n        \"age\": \"5\",\n        \"weight\": \"45.5\",\n        \"story\": \"Boss is always beating Tom.\",\n        \"updatedAt\": \"2022-05-23T17:33:13.401Z\",\n        \"createdAt\": \"2022-05-23T17:33:13.401Z\"\n    },\n    \"code\": 201\n}"
+						},
+						{
+							"name": "400 - Invalid values",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Boss",
+											"description": "String* [min:2, max:125, unique] - Name of the character.",
+											"type": "text"
+										},
+										{
+											"key": "age",
+											"value": "5",
+											"description": "Number [min:0] - Age of the character in years.",
+											"type": "text"
+										},
+										{
+											"key": "weight",
+											"value": "-45.5",
+											"description": "Float [min:0] - Weight of the character in Kg.",
+											"type": "text"
+										},
+										{
+											"key": "story",
+											"value": "Boss is always beating Tom.",
+											"description": "String [max:225] - A description, or background of the character.",
+											"type": "text"
+										},
+										{
+											"key": "movies",
+											"value": "[1,2]",
+											"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}characters",
+									"host": [
+										"{{host}}characters"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "107"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"6b-u65EXpfvcqT3MCdBYty9GUXIFTM\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:33:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": [\n        {\n            \"value\": \"-45.5\",\n            \"msg\": \"Field weight is invalid\",\n            \"param\": \"weight\",\n            \"location\": \"body\"\n        }\n    ],\n    \"code\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Character",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+									"type": "file",
+									"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+								},
+								{
+									"key": "name",
+									"value": "Boss",
+									"description": "String [min:2, max:125] - Name of the character.",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "6",
+									"description": "Number [min:0] - Age of the character in years.",
+									"type": "text"
+								},
+								{
+									"key": "weight",
+									"value": "47.5",
+									"description": "Float [min:0] - Weight of the character in Kg.",
+									"type": "text"
+								},
+								{
+									"key": "story",
+									"value": "Boss is sometimes beating Tom.",
+									"description": "String [max:225] - A description, or background of the character.",
+									"type": "text"
+								},
+								{
+									"key": "movies",
+									"value": "[1]",
+									"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}characters/4",
+							"host": [
+								"{{host}}characters"
+							],
+							"path": [
+								"4"
+							]
+						},
+						"description": "Update the passing values by PATCH. You can pass either one value or several, they are validated and updated in the data row."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Boss",
+											"description": "String [min:2, max:125] - Name of the character.",
+											"type": "text"
+										},
+										{
+											"key": "age",
+											"value": "6",
+											"description": "Number [min:0] - Age of the character in years.",
+											"type": "text"
+										},
+										{
+											"key": "weight",
+											"value": "47.5",
+											"description": "Float [min:0] - Weight of the character in Kg.",
+											"type": "text"
+										},
+										{
+											"key": "story",
+											"value": "Boss is sometimes beating Tom.",
+											"description": "String [max:225] - A description, or background of the character.",
+											"type": "text"
+										},
+										{
+											"key": "movies",
+											"value": "[1]",
+											"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}characters/4",
+									"host": [
+										"{{host}}characters"
+									],
+									"path": [
+										"4"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b-HUweCriiQHUQnzWiwuL5mVxbg44\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:35:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Character modified\",\n    \"code\": 200\n}"
+						},
+						{
+							"name": "400 - Movie does not exists",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"description": "File [jpg|jpeg|png|svg|webp, max: 2mb] - Character image file. ",
+											"type": "file",
+											"src": "/home/ezequiel/Imágenes/AdobeStock_457935340_Preview.jpeg"
+										},
+										{
+											"key": "name",
+											"value": "Boss",
+											"description": "String [min:2, max:125] - Name of the character.",
+											"type": "text"
+										},
+										{
+											"key": "age",
+											"value": "6",
+											"description": "Number [min:0] - Age of the character in years.",
+											"type": "text"
+										},
+										{
+											"key": "weight",
+											"value": "47.5",
+											"description": "Float [min:0] - Weight of the character in Kg.",
+											"type": "text"
+										},
+										{
+											"key": "story",
+											"value": "Boss is sometimes beating Tom.",
+											"description": "String [max:225] - A description, or background of the character.",
+											"type": "text"
+										},
+										{
+											"key": "movies",
+											"value": "[3]",
+											"description": "Array<Number(Id)> - Array of movies id's in which the character stars (Should exists previously).",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}characters/1",
+									"host": [
+										"{{host}}characters"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "90"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5a-b3BKPCO70elZbEarfCKPLtfKBo4\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:34:15 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Movie with Id: 3 does not exists. You should create the movie first\",\n    \"code\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Character",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{valid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}characters/1",
+							"host": [
+								"{{host}}characters"
+							],
+							"path": [
+								"1"
+							]
+						},
+						"description": "Delete Characterby Id."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}characters/1",
+									"host": [
+										"{{host}}characters"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "53"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"35-g+nfTOLOC1f5RqGjGdb/jrIOkSQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 18:54:40 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Character deleted\",\n    \"data\": \"1\",\n    \"code\": 200\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}characters/1",
+									"host": [
+										"{{host}}characters"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-r6GxH0H9rlkzv/DiBDKt8/hbgnc\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 18:55:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"ID does not belong to existing character\",\n    \"code\": 404\n}"
+						}
+					]
+				}
+			],
+			"description": "#### Characters\n\nFields:\n\n*   Id\n*   Image\n*   Name\n*   Age\n*   Weight\n*   Story\n*   Movies\n*   CreatedAt\n*   UpdateAt"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "signup",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"description": "String - Valid email to register new user.",
+									"type": "text"
+								},
+								{
+									"key": "pass",
+									"value": "testing",
+									"description": "String [min:6] - Password to register new user.",
+									"type": "text"
+								},
+								{
+									"key": "pass_repeat",
+									"value": "testing",
+									"description": "String [min:6, match pass] - Repeat password.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}auth/signup",
+							"host": [
+								"{{host}}auth"
+							],
+							"path": [
+								"signup"
+							]
+						},
+						"description": "Register a new user by passing valid emai, pass, and repeated pass."
+					},
+					"response": [
+						{
+							"name": "201",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "teest@gmail.com",
+											"description": "String - Valid email to register new user.",
+											"type": "text"
+										},
+										{
+											"key": "pass",
+											"value": "testing",
+											"description": "String [min:6] - Password to register new user.",
+											"type": "text"
+										},
+										{
+											"key": "pass_repeat",
+											"value": "testing",
+											"description": "String [min:6, match pass] - Repeat password.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}auth/signup",
+									"host": [
+										"{{host}}auth"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-TG6OSEfhQzjietAdf3dSZLhVbA4\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:31:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User created\",\n    \"email\": \"teest@gmail.com\",\n    \"code\": 201\n}"
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "test@gmail.com",
+											"description": "String - Valid email to register new user.",
+											"type": "text"
+										},
+										{
+											"key": "pass",
+											"value": "testing",
+											"description": "String [min:6] - Password to register new user.",
+											"type": "text"
+										},
+										{
+											"key": "pass_repeat",
+											"value": "testing",
+											"description": "String [min:6, match pass] - Repeat password.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}auth/signup",
+									"host": [
+										"{{host}}auth"
+									],
+									"path": [
+										"signup"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2a-mUMPQH9gyZlF5Y7KgRM7rlXAx+8\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:31:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Email is being used\",\n    \"code\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"description": "String - Valid email of user to check on db.",
+									"type": "text"
+								},
+								{
+									"key": "pass",
+									"value": "testing",
+									"description": "String [min:6] - User password to match on db.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}auth/login",
+							"host": [
+								"{{host}}auth"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "Log in an user, by passing existing email, and matching pass."
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "test@gmail.com",
+											"description": "String - Valid email of user to check on db.",
+											"type": "text"
+										},
+										{
+											"key": "pass",
+											"value": "testing",
+											"description": "String [min:6] - User password to match on db.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "localhost:8080/auth/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "207"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"cf-AxbrJXYwIUNzdvPI4DoBDHKCNQk\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 22 May 2022 23:53:28 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User logged correctly\",\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMyNjM2MDgsImV4cCI6MTY1MzM1MDAwOH0.8BJ--viPXvr-Ev5dm8uv9t1dspvgt-wllSoIBr6dcJE\",\n    \"code\": 200\n}"
+						},
+						{
+							"name": "400",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "ttest@gmail.com",
+											"description": "String - Valid email of user to check on db.",
+											"type": "text"
+										},
+										{
+											"key": "pass",
+											"value": "testing",
+											"description": "String [min:6] - User password to match on db.",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}auth/login",
+									"host": [
+										"{{host}}auth"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "36"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"24-Evtaso4HRlCZzuykucmcA46zu3g\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 23 May 2022 17:30:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Invalid email\",\n    \"code\": 400\n}"
+						}
+					]
+				}
+			],
+			"description": "#### Fields:\n\n*   Id\n*   Email\n*   Pass\n*   CreatedAt\n*   UpdateAt"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8080/",
+			"type": "string"
+		},
+		{
+			"key": "expired_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMjUyMTIsImV4cCI6MTY1MzMyNTIxM30.WYDWli2lYwRYbrO1jyf3Zi7dtG5dEJI82zdD2vY7AsY",
+			"type": "string"
+		},
+		{
+			"key": "valid_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMjUyNTMsImV4cCI6MTY4NDg2MTI1M30.YcKQnMMK10bkEmLbXOdABmTKnrqx7skZaF8nmUo4OoE",
+			"type": "string"
+		}
+	]
+}

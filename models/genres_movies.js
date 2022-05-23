@@ -1,10 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
-const Characters = require("./characters");
-const Productions = require("./productions");
+const Genres = require("./genres");
+const Movies = require("./movies");
 
 module.exports = (sequelize, DataTypes) => {
-  class Characters_Productions extends Model {
+  class Genres_Movies extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -12,24 +12,24 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Characters_Productions.belongsTo(models.Productions, {
-        foreignKey: "ProductionId",
+      models.Genres_Movies.belongsTo(models.Movies, {
+        foreignKey: "MovieId",
         targetKey: "id",
       });
-      models.Characters_Productions.belongsTo(models.Characters, {
-        foreignKey: "CharacterId",
+      models.Genres_Movies.belongsTo(models.Genres, {
+        foreignKey: "GenreId",
         targetKey: "id",
       });
     }
   }
-  Characters_Productions.init(
+  Genres_Movies.init(
     {},
     {
       sequelize,
-      modelName: "Characters_Productions",
+      modelName: "Genres_Movies",
       omitNull: false,
       timestamps: false,
     }
   );
-  return Characters_Productions;
+  return Genres_Movies;
 };

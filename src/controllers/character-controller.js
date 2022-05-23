@@ -1,6 +1,6 @@
 const Character = require("../../models").Characters;
-const Production = require("../../models").Productions;
-const Characters_Productions = require("../../models").Characters_Productions;
+const Movie = require("../../models").Movies;
+const Characters_Movies = require("../../models").Characters_Movies;
 const { sequelize } = require("../../models");
 const { Op } = require("sequelize");
 const fs = require("fs");
@@ -19,7 +19,7 @@ const get_characters = async (req, res) => {
   if (req.query.age) where["age"] = req.query.age;
   if (req.query.movies)
     include.push({
-      model: Production,
+      model: Movie,
       where: {
         id: {
           [Op.in]: Array.from(req.query.movies),
@@ -45,7 +45,7 @@ const get_character_by_ID = async (req, res) =>
   Character.findByPk(req.params.id, {
     include: [
       {
-        model: Production,
+        model: Movie,
         attributes: ["id", "image", "title"],
       },
     ],
@@ -56,9 +56,9 @@ const get_character_by_ID = async (req, res) =>
             data: data.dataValues,
             code: 200,
           })
-        : res.status(500).send({
+        : res.status(404).send({
             error: "ID does not belong to existing character",
-            code: 500,
+            code: 404,
           });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
@@ -66,14 +66,14 @@ const get_character_by_ID = async (req, res) =>
 const new_character = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
-    return res.status(500).send({ error: errors.array(), code: 500 });
+    return res.status(400).send({ error: errors.array(), code: 400 });
   let movies, err, image;
-  if (req.body.movies) [movies, err] = await checkProductions(req.body.movies);
-  if (err) return responseError(res, err);
-  //res.status(500).send({
-  //  error: err,
-  //  code: 500,
-  //});
+  if (req.body.movies) [movies, err] = await checkMovies(req.body.movies);
+  if (err)
+    return res.status(400).send({
+      error: err,
+      code: 400,
+    });
   if (req.file && req.file.fieldname === "image") image = req.file.filename;
   return Character.create({
     image: image,
@@ -83,7 +83,7 @@ const new_character = async (req, res) => {
     story: req.body.story,
   })
     .then((char) => {
-      char.addProduction(movies);
+      char.addMovie(movies);
       return res.status(201).send({
         message: "Character created",
         data: char.dataValues,
@@ -96,7 +96,7 @@ const new_character = async (req, res) => {
 const update_character = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
-    return res.status(500).send({ error: errors.array(), code: 500 });
+    return res.status(400).send({ error: errors.array(), code: 400 });
   let movies, err;
   let newValues = {
     name: req.body.name,
@@ -107,28 +107,29 @@ const update_character = async (req, res) => {
   let exists = await Character.findByPk(req.params.id);
   if (!exists)
     return res
-      .status(500)
-      .send({ error: "ID does not belong to existing character", code: 500 });
+      .status(404)
+      .send({ error: "ID does not belong to existing character", code: 404 });
   else if (req.file && req.file.fieldname === "image") {
     newValues.image = req.file.filename;
     if (exists.image)
       fs.unlinkSync(Uploads_URLs.Characters + exists.dataValues.image);
   }
-  if (req.body.movies) [movies, err] = await checkProductions(req.body.movies);
+  if (req.body.movies) [movies, err] = await checkMovies(req.body.movies);
   if (err)
-    return res.status(500).send({
+    return res.status(400).send({
       error: err,
-      code: 500,
+      code: 400,
     });
-  exists.addProduction(movies);
+  exists.addMovie(movies);
   return Character.update(newValues, {
     where: { id: req.params.id },
   })
     .then((c) => {
       let message = c[0] ? "Character modified" : "Character not modified";
-      return res.status(200).send({
+      let code = c[0] ? 200 : 304;
+      return res.status(code).send({
         message: message,
-        code: 200,
+        code: code,
       });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
@@ -137,13 +138,16 @@ const update_character = async (req, res) => {
 const delete_character = async (req, res) => {
   let exists = await Character.findByPk(req.params.id);
   if (!exists)
-    return res.status(500).send({
+    return res.status(404).send({
       error: "ID does not belong to existing character",
-      code: 500,
+      code: 404,
     });
-  if (exists.image)
+  if (
+    exists.image &&
+    fs.existsSync(Uploads_URLs.Characters + exists.dataValues.image)
+  )
     fs.unlinkSync(Uploads_URLs.Characters + exists.dataValues.image);
-  await Characters_Productions.destroy({
+  await Characters_Movies.destroy({
     where: { CharacterId: exists.id },
   });
   return Character.destroy({
@@ -161,13 +165,13 @@ const delete_character = async (req, res) => {
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
 };
 
-const checkProductions = async (movies) => {
+const checkMovies = async (movies) => {
   let res = [];
   let err = "";
   let arr = JSON.parse(movies);
   if (arr.length)
     for (let i = 0; i < arr.length; i++)
-      await Production.findByPk(arr[i]).then((p) =>
+      await Movie.findByPk(arr[i]).then((p) =>
         p
           ? res.push(arr[i])
           : (err =
@@ -177,12 +181,6 @@ const checkProductions = async (movies) => {
       );
   return [res, err];
 };
-
-const responseError = (res, err) =>
-  res.status(500).send({
-    error: err,
-    code: 500,
-  });
 
 module.exports = {
   get_characters,

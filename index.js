@@ -7,7 +7,7 @@ require("dotenv").config();
 //routes
 const authRoutes = require("./src/routes/auth-routes");
 const characterRoutes = require("./src/routes/character-routes");
-const productionRoutes = require("./src/routes/production-routes");
+const movieRoutes = require("./src/routes/movie-routes");
 
 //app
 const app = express();
@@ -45,8 +45,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 //character endpoints
 app.use("/characters", characterRoutes);
-//production endpoints
-app.use("/movies", productionRoutes);
+//movie endpoints
+app.use("/movies", movieRoutes);
 
 // Assign the port number to our app
 app.listen(PORT, () => console.log(`Server Running on port: ${PORT}`));

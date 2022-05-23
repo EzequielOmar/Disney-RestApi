@@ -1,13 +1,15 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = function (req, res, next) {
-  const token = req.header("Authorization").split(" ")[1];
-  if (!token)
+  const authHeader = req.header("Authorization");
+  if (!authHeader)
     return res.status(401).send({ error: "Token not found", code: 401 });
   try {
-    jwt.verify(token, process.env.JWT_PASS);
+    jwt.verify(authHeader.split(" ")[1], process.env.JWT_PASS);
     next();
   } catch (err) {
-    res.status(401).send({ error: "Token expired", code: 401 });
+    res
+      .status(401)
+      .send({ error: "Token expired, please login again", code: 401 });
   }
 };

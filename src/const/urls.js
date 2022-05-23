@@ -1,7 +1,7 @@
 const Uploads_URLs = {
   Characters: "src/uploads/characters/",
   Genres: "src/uploads/genres/",
-  Productions: "src/uploads/productions/",
+  Movies: "src/uploads/movies/",
 };
 
 module.exports = { Uploads_URLs };

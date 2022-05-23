@@ -1,17 +1,17 @@
 var express = require("express");
 var router = express.Router();
-const productionController = require("../controllers/production-controller");
+const movieController = require("../controllers/movie-controller");
 const { Uploads_URLs } = require("../const/urls");
 const multer = require("multer");
-const upload = multer({ dest: Uploads_URLs.Productions });
+const upload = multer({ dest: Uploads_URLs.Movies });
 const { body } = require("express-validator");
 const auth = require("../middlewares/auth");
 
 //CHARACTER ROUTES
 
-router.get("/", productionController.get_productions);
+router.get("/", movieController.get_movies);
 
-router.get("/:id", productionController.get_production_by_ID);
+router.get("/:id", movieController.get_movie_by_ID);
 
 router.post(
   "/",
@@ -19,7 +19,7 @@ router.post(
   upload.single("image"),
   body("title", "Field title is invalid").isLength({ min: 2, max: 125 }),
   body("creation", "Field creation is invalid").isDate(),
-  productionController.new_production
+  movieController.new_movie
 );
 
 router.patch(
@@ -32,9 +32,9 @@ router.patch(
   body("creation", "Field creation is invalid")
     .if(body("creation").exists())
     .isDate(),
-  productionController.update_production
+  movieController.update_movie
 );
 
-router.delete("/:id", auth, productionController.delete_production);
+router.delete("/:id", auth, movieController.delete_movie);
 
 module.exports = router;

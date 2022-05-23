@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const Genres_Productions = require("./genres_productions");
+const Genres_Movies = require("./genres_movies");
 
 module.exports = (sequelize, DataTypes) => {
   class Genres extends Model {
@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Genres.belongsToMany(models.Productions, {
-        through: models.Genres_Productions,
+      models.Genres.belongsToMany(models.Movies, {
+        through: models.Genres_Movies,
         foreignKey: "GenreId",
-        otherKey: "ProductionId",
+        otherKey: "MovieId",
       });
     }
   }

@@ -1,24 +1,24 @@
 "use strict";
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Characters_Productions", {
+    await queryInterface.createTable("Genres_Movies", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      CharacterId: {
+      GenreId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      ProductionId: {
+      MovieId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Characters_Productions");
+    await queryInterface.dropTable("Genres_Movies");
   },
 };

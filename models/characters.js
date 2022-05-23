@@ -1,6 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
-const Characters_Productions = require("./characters_productions");
+const Characters_Movies = require("./characters_movies");
 
 module.exports = (sequelize, DataTypes) => {
   class Characters extends Model {
@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Characters.belongsToMany(models.Productions, {
-        through: models.Characters_Productions,
+      models.Characters.belongsToMany(models.Movies, {
+        through: models.Characters_Movies,
         foreignKey: "CharacterId",
-        otherKey: "ProductionId",
+        otherKey: "MovieId",
       });
     }
   }
@@ -25,15 +25,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: {
         type: DataTypes.STRING,
-        validate: { is: /^[a-z ]+$/i, len: [2, 125] },
+        validate: { is: /^[a-z`' ]+$/i, len: [2, 125] },
       },
       age: {
         type: DataTypes.INTEGER,
-        validate: { isInt: true },
+        validate: { isInt: true, min: 0 },
       },
       weight: {
         type: DataTypes.FLOAT,
-        validate: { isDecimal: true },
+        validate: { isDecimal: true, min: 0 },
       },
       story: {
         type: DataTypes.STRING,
