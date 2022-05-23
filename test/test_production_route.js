@@ -1,221 +1,184 @@
 let chai = require("chai");
-let chaiHttp = require("chai-http");
 const expect = require("chai").expect;
 const assert = require("chai").assert;
 const fs = require("fs");
+let chaiHttp = require("chai-http");
 const faker = require("faker");
-const moment = require("moment");
 chai.use(chaiHttp);
-const url = process.env.HOST;
+
+//vars
+const url = "http://localhost:8080";
 const testImage = "./test/test-image.jpeg";
+const valid_token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMzgxMzh9.O7tgmEyDbe0lkSDhulFU3lIKVkjIMMs3-uIGM5334dA",
+  expired_token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMjUyMTIsImV4cCI6MTY1MzMyNTIxM30.WYDWli2lYwRYbrO1jyf3Zi7dtG5dEJI82zdD2vY7AsY";
 
 //*mockup of movie model
 const Movie = require("../models").Movies;
 
-xdescribe("GET on /movies and /movies/:id :", () => {
-  beforeEach(() => Movie.destroy({ truncate: true }));
-
-  it("Should return an empty list.", (done) => {
+describe("GET on /movies and /movies/:id :", () => {
+  it("Should return a list with two (2) movies", (done) => {
     chai
       .request(url)
       .get("/movies")
       .end(function (err, res) {
         expect(res).to.have.status(200);
-        expect(res.body.data).to.be.an("array").that.is.empty;
+        expect(res.body.data).to.be.an("array").of.length(2);
         done();
       });
   });
 
-  it("Should return an existing movie.", (done) => {
-    const prodTest = {
-      title: faker.name.findName(),
-      creation: faker.date.past(),
-    };
-    //* Create previous movie with repeated name.
-    Movie.create(prodTest).then((char) => {
-      chai
-        .request(url)
-        .get("/movies/" + char.dataValues.id)
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          assert.equal(prodTest.title, res.body.data.title);
-          done();
-        });
-    });
-  });
-
-  it("Should fail on return a non existing movie.", (done) => {
+  it("Should return an existing movie with id:1", (done) => {
     chai
       .request(url)
-      .get(
-        "/movies/" + parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
+      .get("/movies/1")
       .end(function (err, res) {
-        expect(res).to.have.status(500);
-        assert.equal(res.body.error, "ID does not belong to existing movie.");
+        expect(res).to.have.status(200);
+        assert.equal(res.body.data.title, "Tom & Jerry Adventures");
+        done();
+      });
+  });
+
+  it("Should fail on return a non existing movie", (done) => {
+    chai
+      .request(url)
+      .get("/movies/" + 3)
+      .end(function (err, res) {
+        expect(res).to.have.status(404);
+        assert.equal(res.body.error, "ID does not belong to existing movie");
         done();
       });
   });
 });
 
-xdescribe("POST on /movies : ", () => {
-  beforeEach(() => Movie.destroy({ truncate: true }));
-
-  it("Should insert a movie with all the correct values.", (done) => {
-    let date = faker.date.past();
+describe("POST on /movies : ", () => {
+  it("Should insert a movie with all the correct values", (done) => {
     const prodTest = {
       title: faker.name.findName(),
       //* Return an date formated in rfc2822
-      creation: date.toUTCString(),
-      score: parseFloat(Math.floor(Math.random() * -(1 - 5 + 1) + 1)).toFixed(
-        2
-      ),
+      creation: "2012-11-13",
     };
     chai
       .request(url)
       .post("/movies")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
       .field(prodTest)
       .attach("image", fs.readFileSync(testImage), "test-image.jpeg")
       .end(function (err, res) {
         expect(res).to.have.status(201);
-        assert.equal(res.body.message, "Movie created.");
+        assert.equal(res.body.message, "Movie created");
         expect(res.body.data.image).to.be.not.null;
         assert.equal(res.body.data.title, prodTest.title);
         //* Database store and return date in yyy-mm-dd format
         expect(res.body.data.creation).to.be.not.null;
-        assert.equal(res.body.data.score, prodTest.score);
         done();
       });
   });
 
-  it("Should fail by NOT UNIQUE movie title.", (done) => {
+  it("Should fail by NOT UNIQUE movie title", (done) => {
     const prodTest = {
-      title: faker.name.findName(),
-      creation: faker.date.past().toUTCString(),
+      title: "Tom & Jerry Adventures",
+      creation: "2012-11-13",
     };
-    //* Create previous movie with repeated name.
-    Movie.create(prodTest).finally(() => {
-      chai
-        .request(url)
-        .post("/movies")
-        .field("Content-Type", "multipart/form-data")
-        .field(prodTest)
-        .end(function (err, res) {
-          expect(res).to.have.status(500);
-          expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
-          done();
-        });
-    });
-  });
-
-  it("Should fail by MISSING VALUES.", (done) => {
     chai
       .request(url)
       .post("/movies")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
+      .field(prodTest)
       .end(function (err, res) {
         expect(res).to.have.status(500);
-        expect(res.body.error.parent.code).to.be.equal(
-          "ER_NO_DEFAULT_FOR_FIELD"
+        expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
+        done();
+      });
+  });
+
+  it("Should fail by MISSING VALUES", (done) => {
+    chai
+      .request(url)
+      .post("/movies")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .field("Content-Type", "multipart/form-data")
+      .end(function (err, res) {
+        expect(res).to.have.status(400);
+        expect(res.body.error).to.be.not.null;
+        done();
+      });
+  });
+});
+
+describe("PATCH on /movies/:id: ", () => {
+  it("Should modify id:2 movie values with correct passed ones", (done) => {
+    chai
+      .request(url)
+      .patch("/movies/2")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .send({
+        creation: "1985-01-14",
+      })
+      .end(function (err, res) {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.be.equal("Movie modified");
+        done();
+      });
+  });
+
+  it("Should not modify movie title value", (done) => {
+    chai
+      .request(url)
+      .patch("/movies/1")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .send({
+        title: "Cant change title",
+      })
+      .end(function (err, res) {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.be.equal("Movie not modified");
+        done();
+      });
+  });
+
+  it("Should fail if ID does not belong to existing movie", (done) => {
+    chai
+      .request(url)
+      .patch("/movies/40")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .field("Content-Type", "multipart/form-data")
+      .end(function (err, res) {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.be.equal(
+          "ID does not belong to existing movie"
         );
         done();
       });
   });
 });
 
-xdescribe("PATCH on /movies/:id: ", () => {
-  beforeEach(() => Movie.destroy({ truncate: true }));
-
-  it("Should modify movie values with correct passed ones.", (done) => {
-    const prodTest = {
-      title: faker.name.findName(),
-      creation: faker.date.past(),
-    };
-    //* instert the test movie
-    Movie.create(prodTest).then((char) => {
-      chai
-        .request(url)
-        .patch("/movies/" + char.dataValues.id)
-        .send({
-          creation: faker.date.past(),
-        })
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Movie modified.");
-          done();
-        });
-    });
-  });
-
-  it("Should not modify movie if pass incorrect values.", (done) => {
-    const prodTest = {
-      title: faker.name.findName(),
-      creation: faker.date.past(),
-    };
-    //* instert the test movie
-    Movie.create(prodTest).then((char) => {
-      chai
-        .request(url)
-        .patch("/movies/" + char.dataValues.id)
-        .send({ fake: "fakeValue", fake2: "fakeValue2" })
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Movie not modified.");
-          done();
-        });
-    });
-  });
-
-  it("Should fail if ID does not belong to existing movie.", (done) => {
+describe("DELETE on /movies/:id: ", () => {
+  it("Should delete an existing movie id:2", (done) => {
     chai
       .request(url)
-      .patch(
-        "/movies/" + parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
-      .field("Content-Type", "multipart/form-data")
+      .delete("/movies/2")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .end(function (err, res) {
-        expect(res).to.have.status(500);
-        expect(res.body.error).to.be.equal(
-          "ID does not belong to existing movie."
-        );
+        expect(res).to.have.status(200);
+        assert.equal(res.body.message, "Movie deleted");
         done();
       });
   });
-});
 
-xdescribe("DELETE on /movies/:id: ", () => {
-  beforeEach(() => Movie.destroy({ truncate: true }));
-
-  it("Should delete an existing movie.", (done) => {
-    const prodTest = {
-      title: faker.name.findName(),
-      creation: faker.date.past(),
-    };
-    //* instert the test movie
-    Movie.create(prodTest).then((char) => {
-      chai
-        .request(url)
-        .delete("/movies/" + char.dataValues.id)
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          assert.equal(res.body.message, "Movie deleted.");
-          done();
-        });
-    });
-  });
-
-  it("Should fail if ID does not belong to existing movie.", (done) => {
+  it("Should fail if ID does not belong to existing movie", (done) => {
     chai
       .request(url)
-      .delete(
-        "/movies/" + parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
+      .delete("/movies/21")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
       .end(function (err, res) {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(404);
         expect(res.body.error).to.be.equal(
-          "ID does not belong to existing movie."
+          "ID does not belong to existing movie"
         );
         done();
       });

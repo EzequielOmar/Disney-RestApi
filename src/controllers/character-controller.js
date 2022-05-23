@@ -126,10 +126,9 @@ const update_character = async (req, res) => {
   })
     .then((c) => {
       let message = c[0] ? "Character modified" : "Character not modified";
-      let code = c[0] ? 200 : 304;
-      return res.status(code).send({
+      return res.status(200).send({
         message: message,
-        code: code,
+        code: 200,
       });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));

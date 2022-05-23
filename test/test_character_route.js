@@ -1,70 +1,60 @@
 let chai = require("chai");
-let chaiHttp = require("chai-http");
 const expect = require("chai").expect;
 const assert = require("chai").assert;
 const fs = require("fs");
+let chaiHttp = require("chai-http");
 const faker = require("faker");
 chai.use(chaiHttp);
-const url = process.env.HOST;
+
+//vars
+const url = "http://localhost:8080";
 const testImage = "./test/test-image.jpeg";
+const valid_token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMzgxMzh9.O7tgmEyDbe0lkSDhulFU3lIKVkjIMMs3-uIGM5334dA";
 
 //*mockup of character model
 const Character = require("../models").Characters;
 
-xdescribe("GET on /characters and /characters/:id :", () => {
-  beforeEach(() => Character.destroy({ truncate: true }));
-
-  it("Should return an empty list.", (done) => {
+describe("GET on /characters and /characters/:id :", () => {
+  it("Should return a list with three (3) characters", (done) => {
     chai
       .request(url)
       .get("/characters")
       .end(function (err, res) {
         expect(res).to.have.status(200);
-        expect(res.body.data).to.be.an("array").that.is.empty;
+        expect(res.body.data).to.be.an("array").of.length(3);
         done();
       });
   });
 
-  it("Should return an existing character.", (done) => {
-    const charTest = {
-      name: faker.name.findName(),
-      story: faker.hacker.phrase().slice(0, 123),
-    };
-    //* Create previous character with repeated name.
-    Character.create(charTest).then((char) => {
-      chai
-        .request(url)
-        .get("/characters/" + char.dataValues.id)
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          assert.equal(charTest.name, res.body.data.name);
-          done();
-        });
-    });
-  });
-
-  it("Should fail on return a non existing character.", (done) => {
+  it("Should return an existing character", (done) => {
     chai
       .request(url)
-      .get(
-        "/characters/" +
-          parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
+      .get("/characters/1")
       .end(function (err, res) {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(200);
+        assert.equal(res.body.data.name, "Tom");
+        done();
+      });
+  });
+
+  it("Should fail on return a non existing character", (done) => {
+    chai
+      .request(url)
+      .get("/characters/21")
+      .end(function (err, res) {
+        expect(res).to.have.status(404);
         assert.equal(
           res.body.error,
-          "ID does not belong to existing character."
+          "ID does not belong to existing character"
         );
         done();
       });
   });
 });
 
-xdescribe("POST on /characters : ", () => {
-  beforeEach(() => Character.destroy({ truncate: true }));
-
-  it("Should insert a character with all the correct values.", (done) => {
+describe("POST on /characters : ", () => {
+  it("Should insert a character with all the correct values", (done) => {
     const charTest = {
       name: faker.name.findName(),
       age: parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1)),
@@ -74,12 +64,13 @@ xdescribe("POST on /characters : ", () => {
     chai
       .request(url)
       .post("/characters")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
       .field(charTest)
       .attach("image", fs.readFileSync(testImage), "test-image.jpeg")
       .end(function (err, res) {
         expect(res).to.have.status(201);
-        assert.equal(res.body.message, "Character created.");
+        assert.equal(res.body.message, "Character created");
         expect(res.body.data.image).to.be.not.null;
         assert.equal(res.body.data.name, charTest.name);
         assert.equal(res.body.data.age, charTest.age);
@@ -89,135 +80,106 @@ xdescribe("POST on /characters : ", () => {
       });
   });
 
-  it("Should fail by NOT UNIQUE character name.", (done) => {
-    const charTest = {
-      name: faker.name.findName(),
-      story: faker.hacker.phrase().slice(0, 123),
-    };
-    //* Create previous character with repeated name.
-    Character.create(charTest).finally(() => {
-      chai
-        .request(url)
-        .post("/characters")
-        .field("Content-Type", "multipart/form-data")
-        .field(charTest)
-        .end(function (err, res) {
-          expect(res).to.have.status(500);
-          expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
-          done();
-        });
-    });
-  });
-
-  it("Should fail by MISSING VALUES.", (done) => {
+  it("Should fail by NOT UNIQUE character name", (done) => {
     chai
       .request(url)
       .post("/characters")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
+      .field({
+        name: "Tom",
+        age: parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1)),
+        weight: parseFloat(Math.random() * -(1 - 200 + 1) + 1, 2).toFixed(2),
+      })
       .end(function (err, res) {
         expect(res).to.have.status(500);
-        expect(res.body.error.parent.code).to.be.equal(
-          "ER_NO_DEFAULT_FOR_FIELD"
+        expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
+        done();
+      });
+  });
+
+  it("Should fail by MISSING VALUES", (done) => {
+    chai
+      .request(url)
+      .post("/characters")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .field("Content-Type", "multipart/form-data")
+      .end(function (err, res) {
+        expect(res).to.have.status(400);
+        expect(res.body.error).to.be.not.null;
+        done();
+      });
+  });
+});
+
+describe("PATCH on /characters/:id : ", () => {
+  it("Should modify character values with correct passed ones", (done) => {
+    chai
+      .request(url)
+      .patch("/characters/1")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .send({
+        story: faker.hacker.phrase().slice(0, 123),
+      })
+      .end(function (err, res) {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.be.equal("Character modified");
+        done();
+      });
+  });
+
+  it("Should not modify when passing invalid values", (done) => {
+    chai
+      .request(url)
+      .patch("/characters/1")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .send({ invalid: "invalid value" })
+      .end(function (err, res) {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.be.equal("Character not modified");
+        done();
+      });
+  });
+
+  it("Should fail if ID does not belong to existing character", (done) => {
+    chai
+      .request(url)
+      .patch("/characters/45")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .field("Content-Type", "multipart/form-data")
+      .end(function (err, res) {
+        expect(res).to.have.status(404);
+        expect(res.body.error).to.be.equal(
+          "ID does not belong to existing character"
         );
         done();
       });
   });
 });
 
-xdescribe("PATCH on /characters/:id : ", () => {
-  beforeEach(() => Character.destroy({ truncate: true }));
-
-  it("Should modify character values with correct passed ones.", (done) => {
-    const charTest = {
-      name: faker.name.findName(),
-      story: faker.hacker.phrase().slice(0, 123),
-    };
-    //* instert the test character
-    Character.create(charTest).then((char) => {
-      chai
-        .request(url)
-        .patch("/characters/" + char.dataValues.id)
-        .send({
-          story: faker.hacker.phrase().slice(0, 123),
-        })
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Character modified.");
-          done();
-        });
-    });
-  });
-
-  it("Should not modify character if pass incorrect values.", (done) => {
-    const charTest = {
-      name: faker.name.findName(),
-      story: faker.hacker.phrase().slice(0, 123),
-    };
-    //* instert the test character
-    Character.create(charTest).then((char) => {
-      chai
-        .request(url)
-        .patch("/characters/" + char.dataValues.id)
-        .send({ fake: "fakeValue", fake2: "fakeValue2" })
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          expect(res.body.message).to.be.equal("Character not modified.");
-          done();
-        });
-    });
-  });
-
-  it("Should fail if ID does not belong to existing character.", (done) => {
+describe("DELETE on /characters/:id : ", () => {
+  it("Should delete an existing character", (done) => {
     chai
       .request(url)
-      .patch(
-        "/characters/" +
-          parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
-      .field("Content-Type", "multipart/form-data")
+      .delete("/characters/3")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .end(function (err, res) {
-        expect(res).to.have.status(500);
-        expect(res.body.error).to.be.equal(
-          "ID does not belong to existing character."
-        );
+        expect(res).to.have.status(200);
+        assert.equal(res.body.message, "Character deleted");
         done();
       });
   });
-});
 
-xdescribe("DELETE on /characters/:id : ", () => {
-  beforeEach(() => Character.destroy({ truncate: true }));
-
-  it("Should delete an existing character.", (done) => {
-    const charTest = {
-      name: faker.name.findName(),
-      story: faker.hacker.phrase().slice(0, 123),
-    };
-    //* instert the test character
-    Character.create(charTest).then((char) => {
-      chai
-        .request(url)
-        .delete("/characters/" + char.dataValues.id)
-        .end(function (err, res) {
-          expect(res).to.have.status(200);
-          assert.equal(res.body.message, "Character deleted.");
-          done();
-        });
-    });
-  });
-
-  it("Should fail if ID does not belong to existing character.", (done) => {
+  it("Should fail if ID does not belong to existing character", (done) => {
     chai
       .request(url)
-      .delete(
-        "/characters/" +
-          parseInt(Math.floor(Math.random() * -(1 - 200 + 1) + 1))
-      )
+      .delete("/characters/45")
+      .set({ Authorization: `Bearer ${valid_token}` })
       .field("Content-Type", "multipart/form-data")
       .end(function (err, res) {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(404);
         expect(res.body.error).to.be.equal(
-          "ID does not belong to existing character."
+          "ID does not belong to existing character"
         );
         done();
       });

@@ -146,10 +146,9 @@ const update_movie = async (req, res) => {
   })
     .then((m) => {
       let message = m[0] ? "Movie modified" : "Movie not modified";
-      let code = m[0] ? 200 : 304;
-      return res.status(code).send({
+      return res.status(200).send({
         message: message,
-        code: code,
+        code: 200,
       });
     })
     .catch((err) => res.status(500).send({ error: err, code: 500 }));
