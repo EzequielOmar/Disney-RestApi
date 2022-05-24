@@ -176,7 +176,7 @@ const checkMovies = async (movies) => {
           : (err =
               "Movie with Id: " +
               arr[i] +
-              " does not exists. You should create the movie first")
+              " does not exists. You should create it first")
       );
   return [res, err];
 };

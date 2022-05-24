@@ -141,6 +141,22 @@ describe("PATCH on /characters/:id : ", () => {
       });
   });
 
+  it("Should fail by NON EXISTNG movie", (done) => {
+    chai
+      .request(url)
+      .patch("/characters/1")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .send({ movies: "[50]" })
+      .end(function (err, res) {
+        expect(res).to.have.status(400);
+        assert.equal(
+          res.body.error,
+          "Movie with Id: 50 does not exists. You should create it first"
+        );
+        done();
+      });
+  });
+
   it("Should fail if ID does not belong to existing character", (done) => {
     chai
       .request(url)

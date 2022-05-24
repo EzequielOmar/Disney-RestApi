@@ -10,10 +10,7 @@ chai.use(chaiHttp);
 const url = "http://localhost:8080";
 const testImage = "./test/test-image.jpeg";
 const valid_token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMzgxMzh9.O7tgmEyDbe0lkSDhulFU3lIKVkjIMMs3-uIGM5334dA",
-  expired_token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMjUyMTIsImV4cCI6MTY1MzMyNTIxM30.WYDWli2lYwRYbrO1jyf3Zi7dtG5dEJI82zdD2vY7AsY";
-
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2NTMzMzgxMzh9.O7tgmEyDbe0lkSDhulFU3lIKVkjIMMs3-uIGM5334dA";
 //*mockup of movie model
 const Movie = require("../models").Movies;
 
@@ -91,6 +88,28 @@ describe("POST on /movies : ", () => {
       .end(function (err, res) {
         expect(res).to.have.status(500);
         expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
+        done();
+      });
+  });
+
+  it("Should fail by NON EXISTING genre", (done) => {
+    const prodTest = {
+      title: "Tom & Jerry Adventures",
+      creation: "2012-11-13",
+      genres: "[1,2,3]",
+    };
+    chai
+      .request(url)
+      .post("/movies")
+      .set({ Authorization: `Bearer ${valid_token}` })
+      .field("Content-Type", "multipart/form-data")
+      .field(prodTest)
+      .end(function (err, res) {
+        expect(res).to.have.status(400);
+        assert.equal(
+          res.body.error,
+          "Genre with Id: 3 does not exists. You should create it first"
+        );
         done();
       });
   });
