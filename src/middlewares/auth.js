@@ -8,8 +8,6 @@ module.exports = function (req, res, next) {
     jwt.verify(authHeader.split(" ")[1], process.env.JWT_PASS);
     next();
   } catch (err) {
-    res
-      .status(401)
-      .send({ error: "Token expired, please login again", code: 401 });
+    next({ error: "Token expired, please login again", code: 401 });
   }
 };

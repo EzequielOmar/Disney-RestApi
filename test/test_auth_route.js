@@ -52,6 +52,7 @@ describe("POST on /login :", () => {
       .end(function (err, res) {
         expect(res).to.have.status(200);
         assert.equal(res.body.message, "User logged correctly");
+        expect(res.body.accessToken).to.be.not.null;
         done();
       });
   });

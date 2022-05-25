@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
@@ -31,9 +30,6 @@ const connectDB = async () =>
     .catch((e) => console.error("Unable to connect to the database:", e));
 connectDB();
 
-// Apply CORS policy
-//app.use(cors());
-
 // parse application/json
 app.use(bodyParser.json());
 
@@ -41,6 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Routes
+
 //auth endpoints
 app.use("/auth", authRoutes);
 //character endpoints
@@ -48,5 +45,20 @@ app.use("/characters", characterRoutes);
 //movie endpoints
 app.use("/movies", movieRoutes);
 
+app.use((err, req, res, next) => {
+  console.log("err handler");
+  console.log(err);
+  //sequelize contrains errors
+  if (err.hasOwnProperty("name"))
+    return res.status(400).send({ error: err.errors[0].message, code: 400 });
+  //operational errors
+  else if (err.hasOwnProperty("code") && err.code !== 500)
+    return res.status(err.code).send(err);
+  //internal errors
+  else
+    return res
+      .status(500)
+      .send({ error: "Sorry, something went terribly wrong...", code: 500 });
+});
 // Assign the port number to our app
 app.listen(PORT, () => console.log(`Server Running on port: ${PORT}`));

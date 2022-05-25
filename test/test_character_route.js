@@ -92,8 +92,8 @@ describe("POST on /characters : ", () => {
         weight: parseFloat(Math.random() * -(1 - 200 + 1) + 1, 2).toFixed(2),
       })
       .end(function (err, res) {
-        expect(res).to.have.status(500);
-        expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
+        expect(res).to.have.status(400);
+        assert(res.body.error, "name must be unique");
         done();
       });
   });

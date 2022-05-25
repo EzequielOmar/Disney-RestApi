@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: {
         type: DataTypes.STRING,
-        validate: { is: /^[a-z`' ]+$/i, len: [2, 125] },
+        validate: { is: /^[a-z`'.-_ ]+$/i, len: [2, 125] },
       },
       age: {
         type: DataTypes.INTEGER,

@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const characterController = require("../controllers/character-controller");
-const { Uploads_URLs } = require("../const/urls");
+const { Uploads_URLs } = require("../const/helpers");
 const multer = require("multer");
 const upload = multer({ dest: Uploads_URLs.Characters });
 const { body } = require("express-validator");

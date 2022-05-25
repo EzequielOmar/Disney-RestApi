@@ -86,8 +86,8 @@ describe("POST on /movies : ", () => {
       .field("Content-Type", "multipart/form-data")
       .field(prodTest)
       .end(function (err, res) {
-        expect(res).to.have.status(500);
-        expect(res.body.error.parent.code).to.be.equal("ER_DUP_ENTRY");
+        expect(res).to.have.status(400);
+        assert(res.body.error, "title must be unique");
         done();
       });
   });
