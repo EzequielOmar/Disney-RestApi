@@ -21,6 +21,13 @@ router.post(
   body("age", "Field age is invalid").isInt({ min: 0 }),
   body("weight", "Field weight is invalid").isFloat({ min: 0 }),
   body("story", "Field story is invalid").isLength({ max: 225 }),
+  body("movies", "Field movies must be an array of int").if(
+    body("movies")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
   characterController.new_character
 );
 
@@ -40,6 +47,13 @@ router.patch(
   body("story", "Field story is invalid")
     .if(body("story").exists())
     .isLength({ max: 225 }),
+  body("movies", "Field movies must be an array of int").if(
+    body("movies")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
   characterController.update_character
 );
 

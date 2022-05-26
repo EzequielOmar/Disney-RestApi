@@ -13,8 +13,9 @@ The **_disney.postman_collection.json_** file in the project root, can be used t
 The system consist of three entities: **Genre, Movie, Character**.
 
 **Many to Many** relation on:
-Genre <=> Movie
-Character <=> Movie
+
+- Genre <=> Movie
+- Character <=> Movie
 
 Enabled endpoints for CRUD methods for **Character** and **Movie** entities. And enabled endpoints (**signup** and **login**) to create and authenticate users.
 

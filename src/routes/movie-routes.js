@@ -19,6 +19,20 @@ router.post(
   upload.single("image"),
   body("title", "Field title is invalid").isLength({ min: 2, max: 125 }),
   body("creation", "Field creation is invalid").isDate(),
+  body("characters", "Field characters must be an array of int").if(
+    body("characters")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
+  body("genres", "Field genres must be an array of int").if(
+    body("genres")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
   movieController.new_movie
 );
 
@@ -32,6 +46,20 @@ router.patch(
   body("creation", "Field creation is invalid")
     .if(body("creation").exists())
     .isDate(),
+  body("characters", "Field characters must be an array of int").if(
+    body("characters")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
+  body("genres", "Field genres must be an array of int").if(
+    body("genres")
+      .exists()
+      .custom((value) => {
+        if (Array.isArray(JSON.parse(value))) return true;
+      })
+  ),
   movieController.update_movie
 );
 

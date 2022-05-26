@@ -13,15 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // connection String to mysql
-const sequelize = new Sequelize(
-  "F8QUBGFw85",
-  "F8QUBGFw85",
-  process.env.DB_PASS,
-  {
-    host: "remotemysql.com",
-    dialect: "mysql",
-  }
-);
+const sequelize = new Sequelize("F8QUBGFw85", "F8QUBGFw85", "b3LvHeDgmu", {
+  host: "remotemysql.com",
+  dialect: "mysql",
+});
 
 const connectDB = async () =>
   await sequelize

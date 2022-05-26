@@ -103,10 +103,8 @@ const update_character = async (req, res, next) => {
       weight: req.body.weight,
       story: req.body.story,
     };
-    let exists = await Character.findByPk(req.params.id);
-    if (!exists)
-      throw { error: "ID does not belong to existing character", code: 404 };
-    else if (req.file && req.file.fieldname === "image") {
+    let exists = await char_exists(req.params.id);
+    if (req.file && req.file.fieldname === "image") {
       newValues.image = req.file.filename;
       if (exists.image)
         fs.unlinkSync(Uploads_URLs.Characters + exists.dataValues.image);
@@ -130,12 +128,7 @@ const update_character = async (req, res, next) => {
 
 const delete_character = async (req, res, next) => {
   try {
-    let exists = await Character.findByPk(req.params.id);
-    if (!exists)
-      throw {
-        error: "ID does not belong to existing character",
-        code: 404,
-      };
+    let exists = await char_exists(req.params.id);
     if (
       exists.image &&
       fs.existsSync(Uploads_URLs.Characters + exists.dataValues.image)
@@ -159,11 +152,24 @@ const delete_character = async (req, res, next) => {
   }
 };
 
+const char_exists = async (id) =>
+  Character.findByPk(id)
+    .then((c) => {
+      if (!c)
+        throw {
+          error: "ID does not belong to existing character",
+          code: 404,
+        };
+      return c;
+    })
+    .catch((e) => {
+      throw e;
+    });
+
 module.exports = {
   get_characters,
   get_character_by_ID,
   new_character,
   update_character,
   delete_character,
-  // checkCharactersArray,
 };

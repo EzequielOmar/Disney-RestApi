@@ -115,10 +115,8 @@ const update_movie = async (req, res, next) => {
         creation: req.body.creation,
         score: req.body.score,
       };
-    let exists = await Movie.findByPk(req.params.id);
-    if (!exists)
-      throw { error: "ID does not belong to existing movie", code: 404 };
-    else if (req.file && req.file.fieldname === "image") {
+    let exists = await movie_exists(req.params.id);
+    if (req.file && req.file.fieldname === "image") {
       newValues.image = req.file.filename;
       if (exists.image)
         fs.unlinkSync(Uploads_URLs.Movies + exists.dataValues.image);
@@ -149,12 +147,7 @@ const update_movie = async (req, res, next) => {
 
 const delete_movie = async (req, res, next) => {
   try {
-    let exists = await Movie.findByPk(req.params.id);
-    if (!exists)
-      throw {
-        error: "ID does not belong to existing movie",
-        code: 404,
-      };
+    let exists = await movie_exists(req.params.id);
     if (
       exists.image &&
       fs.existsSync(Uploads_URLs.Movies + exists.dataValues.image)
@@ -180,6 +173,20 @@ const delete_movie = async (req, res, next) => {
     next(err);
   }
 };
+
+const movie_exists = async (id) =>
+  Movie.findByPk(id)
+    .then((m) => {
+      if (!m)
+        throw {
+          error: "ID does not belong to existing movie",
+          code: 404,
+        };
+      return m;
+    })
+    .catch((e) => {
+      throw e;
+    });
 
 module.exports = {
   get_movies,
