@@ -2,12 +2,28 @@ var express = require("express");
 var router = express.Router();
 const movieController = require("../controllers/movie-controller");
 const { Uploads_URLs } = require("../const/helpers");
-const multer = require("multer");
-const upload = multer({ dest: Uploads_URLs.Movies });
-const { body } = require("express-validator");
 const auth = require("../middlewares/auth");
+const { body } = require("express-validator");
+const multer = require("multer");
 
-//CHARACTER ROUTES
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: Uploads_URLs.Movies,
+  }),
+  fileFilter: (req, file, cb) => {
+    if (
+      !["jpg", "jpeg", "webp", "gif", "png", "svg"].includes(
+        file.mimetype.split("/")[1]
+      )
+    )
+      return cb({ error: "File format is not allowed", code: 400 });
+    if (file.size >= 2097152)
+      return cb({ error: "File is too heavy. Max allowed is 2mb", code: 400 });
+    return cb(null, true);
+  },
+});
+
+//MOVIES ROUTES
 
 router.get("/", movieController.get_movies);
 

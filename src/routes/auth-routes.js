@@ -3,6 +3,8 @@ const router = express.Router();
 const authController = require("../controllers/auth-controller");
 const { check } = require("express-validator");
 
+//AUTH ROUTES
+
 router.post(
   "/signup",
   check("email", "Field email is invalid.").isEmail(),

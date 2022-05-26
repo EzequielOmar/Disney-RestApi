@@ -41,8 +41,6 @@ app.use("/characters", characterRoutes);
 app.use("/movies", movieRoutes);
 
 app.use((err, req, res, next) => {
-  console.log("err handler");
-  console.log(err);
   //sequelize contrains errors
   if (err.hasOwnProperty("name"))
     return res.status(400).send({ error: err.errors[0].message, code: 400 });

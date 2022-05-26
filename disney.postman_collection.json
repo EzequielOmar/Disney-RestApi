@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "648f70d4-f977-4e80-8ad0-ce5f4eccb28e",
 		"name": "ALKEMY CHALLENGE BACKEND - NodeJs",
-		"description": "#### ALKEMY CHALLENGE BACKEND - NodeJs\n\n# **Disney Api**\n\n###### Node-Express-Sequelize-MySql-Jwt\n\nThe system consist of three entities: **Genre**, **Movie**, **Character**.\n\n**Many to Many** relation on:\n\n*   Genre <-> Movie\n*   Character <-> Movie\n    \n\nEnabled endpoints for **CRUD** methods for **Character** and **Movie** entities. And enabled endpoints (**signup** and **login**) to create and authenticate users.\n\nAll the methods that modify data are private and require **Authentication Bearer** header.",
+		"description": "# **Disney Api**\n\n###### Node-Express-Sequelize-MySql-Jwt\n\nThe system consist of three entities: **Genre**, **Movie**, **Character**.\n\n**Many to Many** relation on:\n\n*   Genre <-> Movie\n*   Character <-> Movie\n    \n\nEnabled endpoints for **CRUD** methods for **Character** and **Movie** entities. And enabled endpoints (**signup** and **login**) to create and authenticate users.\n\nAll the methods that modify data are private and require **Authentication Bearer** header.\n\n### Genres\n\n#### Fields:\n\n*   Id\n*   Image\n*   Name\n*   Movies",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9036853"
 	},
@@ -643,7 +643,7 @@
 					},
 					"response": [
 						{
-							"name": "200",
+							"name": "200 - Modified",
 							"originalRequest": {
 								"method": "PATCH",
 								"header": [],
@@ -735,7 +735,7 @@
 							"body": "{\n    \"message\": \"Movie modified\",\n    \"code\": 200\n}"
 						},
 						{
-							"name": "304",
+							"name": "200 - Not Modified",
 							"originalRequest": {
 								"method": "PATCH",
 								"header": [],
@@ -753,8 +753,7 @@
 											"key": "title",
 											"value": "Tom & Jerry 5 - The revenge",
 											"description": "String [min:2, max:125] - Title of the new movie.",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										},
 										{
 											"key": "creation",
@@ -787,30 +786,38 @@
 									]
 								},
 								"url": {
-									"raw": "{{host}}movies/2",
+									"raw": "{{host}}movies/1",
 									"host": [
 										"{{host}}movies"
 									],
 									"path": [
-										"2"
+										"1"
 									]
 								}
 							},
-							"status": "Not Modified",
-							"code": 304,
-							"_postman_previewlanguage": "plain",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
 							"header": [
 								{
 									"key": "X-Powered-By",
 									"value": "Express"
 								},
 								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
 									"key": "ETag",
-									"value": "W/\"2b-rNf6ddueMUPXdOp6rF99Puv9HAw\""
+									"value": "W/\"2b-mkZJOHpIZ+08w6zjM2Vz0sPMJBc\""
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 23 May 2022 17:24:25 GMT"
+									"value": "Mon, 23 May 2022 21:55:10 GMT"
 								},
 								{
 									"key": "Connection",
@@ -822,7 +829,7 @@
 								}
 							],
 							"cookie": [],
-							"body": null
+							"body": "{\n    \"message\": \"Movie not modified\",\n    \"code\": 200\n}"
 						},
 						{
 							"name": "400",
@@ -1982,7 +1989,7 @@
 									"urlencoded": [
 										{
 											"key": "email",
-											"value": "teest@gmail.com",
+											"value": "tesst@gmail.com",
 											"description": "String - Valid email to register new user.",
 											"type": "text"
 										},
@@ -2024,15 +2031,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "63"
+									"value": "37"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"3f-TG6OSEfhQzjietAdf3dSZLhVbA4\""
+									"value": "W/\"25-/81h5WMF8YFD6uGuhQE0GX2tvrM\""
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 23 May 2022 17:31:42 GMT"
+									"value": "Wed, 25 May 2022 15:47:46 GMT"
 								},
 								{
 									"key": "Connection",
@@ -2044,7 +2051,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"message\": \"User created\",\n    \"email\": \"teest@gmail.com\",\n    \"code\": 201\n}"
+							"body": "{\n    \"message\": \"User created\",\n    \"code\": 201\n}"
 						},
 						{
 							"name": "400",
